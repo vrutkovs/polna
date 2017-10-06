@@ -1,0 +1,42 @@
+{{ define "head" }}
+<title>Polna</title>
+<link rel="stylesheet" href="/static/css/codemirror.css">
+<link rel="stylesheet" href="/static/css/polna.css">
+<script src="/static/js/codemirror.js"></script>
+{{ end }}
+
+{{ define "navbar_buttons" }}
+<a id="reset" class="navbar-item" title="Reset paste">
+  <span class="icon is-small">
+    <i class="fa fa-plus"></i>
+  </span>
+</a>
+<a id="submit" class="navbar-item" title="Submit">
+  <span class="icon is-small">
+    <i class="fa fa-floppy-o"></i>
+  </span>
+</a>
+{{ end }}
+
+{{ define "content" }}
+<div class="columns">
+  <div class="column is-12">
+    <div class="control">
+      <form id="form" action="/" method="post">
+        <textarea id="code" name="code" class="textarea"></textarea>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+  var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+    lineNumbers: true
+  });
+  document.getElementById("reset").onclick = function(){
+    editor.setValue('');
+  };
+  document.getElementById("submit").onclick = function(){
+    document.getElementById("form").submit();
+  }
+</script>
+{{ end }}

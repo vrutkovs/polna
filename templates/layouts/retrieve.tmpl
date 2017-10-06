@@ -1,0 +1,44 @@
+{{ define "head" }}
+<title>Polna</title>
+<link rel="stylesheet" href="/static/css/codemirror.css">
+<link rel="stylesheet" href="/static/css/polna.css">
+<link rel="stylesheet" href="/static/css/polna-readonly.css">
+<script src="/static/js/codemirror.js"></script>
+{{ end }}
+
+{{ define "navbar_buttons" }}
+<a href="/paste/{{ .id }}/raw" class="navbar-item" title="View raw">
+  <span class="icon is-small">
+    <i class="fa fa-file-text-o"></i>
+  </span>
+</a>
+{{ end }}
+
+{{ define "content" }}
+<div class="columns">
+  <div class="column is-12">
+    <div class="control cm-m-read-only">
+      <textarea id="code" name="code" class="textarea">{{ .paste }}</textarea>
+    </div>
+  </div>
+</div>
+<script>
+var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+  lineNumbers: true,
+  readOnly: true
+  //lineNumberFormatter: function(line) {
+  //  return "<a href='#" + line + "'>" + line + "</a>"
+  //}
+});
+// 
+// Highlight a line if hash is specified
+window.onhashchange = function () {
+  var hash = window.location.hash;
+  var line = hash.match(/#(.*)/)[1]
+  editor.setSelection(
+    { line: line-1, ch: 0 },
+    { line: line, ch: 0 },
+    { scroll: true });
+}
+</script>
+{{ end }}
