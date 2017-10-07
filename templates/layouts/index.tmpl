@@ -6,11 +6,6 @@
 {{ end }}
 
 {{ define "navbar_buttons" }}
-<a id="reset" class="navbar-item" title="Reset paste">
-  <span class="icon is-small">
-    <i class="fa fa-plus"></i>
-  </span>
-</a>
 <a id="submit" class="navbar-item" title="Submit">
   <span class="icon is-small">
     <i class="fa fa-floppy-o"></i>
@@ -32,9 +27,6 @@
   var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
     lineNumbers: true
   });
-  document.getElementById("reset").onclick = function(){
-    editor.setValue('');
-  };
   document.getElementById("submit").onclick = function(){
     document.getElementById("form").submit();
   }
