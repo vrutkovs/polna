@@ -1,0 +1,17 @@
+{{ define "head" }}
+<title>Polna</title>
+<link rel="stylesheet" href="/static/css/polna.css">
+{{ end }}
+
+{{ define "content" }}
+<div class="hero-body">
+    <div class="container">
+        <h1 class="title">
+        HTTP {{ .error }}
+        </h1>
+        <h2 class="subtitle">
+        {{ .message }}
+        </h2>
+    </div>
+</div>
+{{ end }}

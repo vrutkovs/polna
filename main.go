@@ -42,6 +42,13 @@ func loadTemplates(templatesDir string) multitemplate.Render {
     return r
 }
 
+func showError(c *gin.Context, httpCode int, err error) {
+    c.HTML(httpCode, "error.tmpl", gin.H{
+        "error": httpCode,
+        "message": err.Error(),
+    })
+}
+
 func addRoutes(r *gin.Engine) {
     r.GET("/", func(c *gin.Context) {
         c.HTML(http.StatusOK, "index.tmpl", gin.H{})
@@ -51,7 +58,7 @@ func addRoutes(r *gin.Engine) {
         id := c.Param("id")
         paste, err := getPaste(id)
         if err != nil {
-            c.AbortWithError(http.StatusNotFound, err)
+            showError(c, http.StatusNotFound, fmt.Errorf("Paste %s not found", id))
         }
         c.HTML(http.StatusOK, "retrieve.tmpl", gin.H{
             "id":    id,
@@ -60,9 +67,10 @@ func addRoutes(r *gin.Engine) {
     })
 
     r.GET("/paste/:id/raw", func(c *gin.Context) {
-        paste, err := getPaste(c.Param("id"))
+        id := c.Param("id")
+        paste, err := getPaste(id)
         if err != nil {
-            c.AbortWithError(http.StatusNotFound, err)
+            showError(c, http.StatusNotFound, fmt.Errorf("Paste %s not found", id))
         }
         c.String(http.StatusOK, paste)
     })
@@ -70,11 +78,11 @@ func addRoutes(r *gin.Engine) {
     r.POST("/api", func(c *gin.Context) {
         paste, err := ioutil.ReadAll(c.Request.Body)
         if err != nil {
-            c.AbortWithError(http.StatusInternalServerError, err)
+            showError(c, http.StatusInternalServerError, err)
         }
         id, err := savePasteInFile(string(paste))
         if err != nil {
-            c.AbortWithError(http.StatusInternalServerError, err)
+            showError(c, http.StatusInternalServerError, err)
         }
         url := fmt.Sprintf("%s/paste/%s\n", location.Get(c), id)
         c.String(http.StatusOK, url)
@@ -84,7 +92,7 @@ func addRoutes(r *gin.Engine) {
         paste := c.PostForm("code")
         id, err := savePasteInFile(paste)
         if err != nil {
-            c.AbortWithError(http.StatusInternalServerError, err)
+            showError(c, http.StatusInternalServerError, err)
         }
         url := fmt.Sprintf("%s/paste/%s", location.Get(c), id)
         c.Redirect(301, url)
