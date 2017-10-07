@@ -9,7 +9,10 @@ install:
   - "go get -u -v github.com/kardianos/govendor"
   - "govendor sync"
 
-script: "go test -v ./..."
+script: 
+  - "govendor sync"
+  - "go build"
+  - "go test -v ./..."
 
 after_success:
   - if [[ "$TRAVIS_BRANCH" == "master" && "$TRAVIS_PULL_REQUEST" == "false" ]]; then
