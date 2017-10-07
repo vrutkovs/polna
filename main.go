@@ -1,6 +1,7 @@
 package main
 
 import (
+    "os"
     "fmt"
     "io/ioutil"
     "net/http"
@@ -49,6 +50,14 @@ func showError(c *gin.Context, httpCode int, err error) {
     })
 }
 
+func buildPasteURL(c *gin.Context, id string) string {
+    hostname := os.Getenv("PUBLIC_HOSTNAME")
+    if (hostname == "") {
+        hostname = fmt.Sprintf("%s", location.Get(c))
+    }
+    return fmt.Sprintf("%s/paste/%s", hostname, id)
+}
+
 func addRoutes(r *gin.Engine) {
     r.GET("/", func(c *gin.Context) {
         c.HTML(http.StatusOK, "index.tmpl", gin.H{})
@@ -84,8 +93,7 @@ func addRoutes(r *gin.Engine) {
         if err != nil {
             showError(c, http.StatusInternalServerError, err)
         }
-        url := fmt.Sprintf("%s/paste/%s\n", location.Get(c), id)
-        c.String(http.StatusOK, url)
+        c.String(http.StatusOK, buildPasteURL(c, id) + "\n")
     })
 
     r.POST("/", func(c *gin.Context) {
@@ -94,8 +102,7 @@ func addRoutes(r *gin.Engine) {
         if err != nil {
             showError(c, http.StatusInternalServerError, err)
         }
-        url := fmt.Sprintf("%s/paste/%s", location.Get(c), id)
-        c.Redirect(301, url)
+        c.Redirect(301, buildPasteURL(c, id))
     })
 }
 
