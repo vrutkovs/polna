@@ -3,6 +3,12 @@
 	"ignore": "test",
 	"package": [
 		{
+			"checksumSHA1": "/ZKYY5UxYdNVV5Ntcq/Jx4hsaAA=",
+			"path": "github.com/gin-contrib/location",
+			"revision": "5220ebf8be6c350431168cbd884f2c0ace0e3f4c",
+			"revisionTime": "2017-09-17T02:18:33Z"
+		},
+		{
 			"checksumSHA1": "n/lOgkkwZ1EVMSvN87dGe8mMPCI=",
 			"path": "github.com/gin-contrib/multitemplate",
 			"revision": "bbc6daf6024bc4c48f334a0490321cd48a24da3d",

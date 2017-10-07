@@ -12,6 +12,7 @@ import (
     "path/filepath"
 
     "github.com/gin-contrib/multitemplate"
+    "github.com/gin-contrib/location"
     "github.com/gin-gonic/gin"
 )
 
@@ -105,7 +106,6 @@ func addRoutes(r *gin.Engine) {
 
     r.GET("/paste/:id", func(c *gin.Context) {
         id := c.Param("id")
-        // TODO: Verify ID
         paste, err := getPaste(id)
         if err != nil {
             c.AbortWithError(http.StatusNotFound, err)
@@ -125,12 +125,16 @@ func addRoutes(r *gin.Engine) {
     })
 
     r.POST("/api", func(c *gin.Context) {
-        paste := "woot_woot"
-        id, err := savePasteInFile(paste)
+        paste, err := ioutil.ReadAll(c.Request.Body)
         if err != nil {
             c.AbortWithError(http.StatusInternalServerError, err)
         }
-        c.Redirect(301, "/"+id)
+        id, err := savePasteInFile(string(paste))
+        if err != nil {
+            c.AbortWithError(http.StatusInternalServerError, err)
+        }
+        url := fmt.Sprintf("%s/paste/%s\n", location.Get(c), id)
+        c.String(http.StatusOK, url)
     })
 
     r.POST("/", func(c *gin.Context) {
@@ -139,7 +143,8 @@ func addRoutes(r *gin.Engine) {
         if err != nil {
             c.AbortWithError(http.StatusInternalServerError, err)
         }
-        c.Redirect(301, "/paste/"+id)
+        url := fmt.Sprintf("%s/paste/%s", location.Get(c), id)
+        c.Redirect(301, url)
     })
 }
 
@@ -148,6 +153,7 @@ func main() {
 
     r.Use(gin.Logger())
     r.Use(gin.Recovery())
+    r.Use(location.Default())
 
     r.Static("/static", "./static")
 
