@@ -18,4 +18,6 @@ RUN govendor sync -v && \
 
 ENV GIN_MODE release
 
+EXPOSE 8080
+
 CMD ["/go/bin/polna"]
