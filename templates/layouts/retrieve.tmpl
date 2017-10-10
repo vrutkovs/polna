@@ -31,14 +31,19 @@ var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
   //}
 });
 // 
-// Highlight a line if hash is specified
 window.onhashchange = function () {
   var hash = window.location.hash;
-  var line = hash.match(/#(.*)/)[1]
-  editor.setSelection(
-    { line: line-1, ch: 0 },
-    { line: line, ch: 0 },
-    { scroll: true });
+  var param = hash.match(/#(.*)/)[1];
+  // Highlight a line if hash is specified
+  if (param.startsWith("L")) {
+    var line = param.slice(1,);
+    editor.setSelection(
+      { line: line-1, ch: 0 },
+      { line: line, ch: 0 },
+      { scroll: true });
+  } else if (param == "wrap") {
+    editor.setOption("lineWrapping", true);
+  }
 }
 </script>
 {{ end }}
