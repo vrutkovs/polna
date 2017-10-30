@@ -12,6 +12,11 @@
     <i class="fa fa-file-text-o"></i>
   </span>
 </a>
+<a href="/paste/{{ .id }}#wrap" class="navbar-item" title="Wrap lines">
+  <span class="icon is-small">
+    <i class="fa fa-indent"></i>
+  </span>
+</a>
 {{ end }}
 
 {{ define "content" }}
@@ -26,24 +31,29 @@
 var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
   lineNumbers: true,
   readOnly: true
-  //lineNumberFormatter: function(line) {
-  //  return "<a href='#" + line + "'>" + line + "</a>"
-  //}
 });
-// 
-window.onhashchange = function () {
-  var hash = window.location.hash;
-  var param = hash.match(/#(.*)/)[1];
-  // Highlight a line if hash is specified
-  if (param.startsWith("L")) {
-    var line = param.slice(1,);
-    editor.setSelection(
-      { line: line-1, ch: 0 },
-      { line: line, ch: 0 },
-      { scroll: true });
-  } else if (param == "wrap") {
-    editor.setOption("lineWrapping", true);
-  }
+
+function onHashChange() {
+  // Default settings
+  editor.setOption("lineWrapping", false);
+
+  var hash = window.location.hash.substr(1);
+  var result = hash.split('&').reduce(function (result, item) {
+    if (item == "wrap") {
+      editor.setOption("lineWrapping", true);
+    } else if (item.startsWith("L")) {
+      var line = item.slice(1,);
+      editor.setSelection(
+        { line: line-1, ch: 0 },
+        { line: line, ch: 0 },
+        { scroll: true });
+    }
+
+  }, {});
 }
+
+onHashChange();
+
+window.onhashchange = onHashChange;
 </script>
 {{ end }}
